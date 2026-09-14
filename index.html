@@ -1,12 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Базовый шаблон</title>
-    <link  rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Vitold Habets - CV</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt illo tempora nulla aperiam dolore. Suscipit laborum ab delectus, repellat doloribus voluptate esse praesentium quas, temporibus facilis nesciunt excepturi molestias modi.
+
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#contacts">Contact me</a></li>
+        <li><a href="#about">Summary</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#code">Code</a></li>
+        <li><a href="#work">Work Experience</a></li>
+        <li><a href="#graduation">Education</a></li>
+        <li><a href="#languages">Languages</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="bio_header" id="contacts">
+      <div class="profile">
+        <img class="profile_photo" src="resources/pictures/profile-picture.jpg" alt="Profile photo">
+        <div class="profile_info">
+          <h1 class="profile_name">Vitold Habets</h1>
+          <p class="profile_role">Electromechanical Engineer</p>
+          <ul class="profile_contacts">
+            <li><a href="mailto:bobscrewy@gmail.com">mail</a></li>
+            <li><a href="https://t.me/CIUNIT">tg</a></li>
+            <li><a href="https://discordapp.com/users/337298530257338369/">discord</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <h2>Summary</h2>
+      <p>
+        My goal is to reduce and automate routine processes through IT.
+        While working at a design institute on technological security systems,
+        I dealt with large amounts of repetitive data. Despite my careful approach,
+        large volumes inevitably led to errors. Learning C# gave me abstractions
+        to structure repetitive information — making my workflow faster and more reliable.
+      </p>
+      <h3>Career Goals</h3>
+      <ul>
+        <li>Master full-stack JavaScript development</li>
+        <li>Grow into a well-rounded software developer</li>
+        <li>Build fast, intuitive, and user-friendly applications</li>
+      </ul>
+      <h3>Strengths</h3>
+      <ul>
+        <li>Highly ambitious and driven</li>
+        <li>Strong communication skills</li>
+        <li>Persistent and goal-oriented</li>
+        <li>Fast learner with a passion for new technologies</li>
+      </ul>
+    </section>
+
+    <section id="skills">
+      <h2>Skills</h2>
+
+      <h3>Programming Languages</h3>
+      <ul class="skill-list">
+        <li class="skill">C#</li>
+        <li class="skill">C++</li>
+        <li class="skill">LISP</li>
+      </ul>
+
+      <h3>Frameworks &amp; Libraries</h3>
+      <ul class="skill-list">
+        <li class="skill">Entity Framework Core</li>
+      </ul>
+
+      <h3>Programming Concepts</h3>
+      <ul class="skill-list">
+        <li class="skill">Object-Oriented Programming (OOP)</li>
+        <li class="skill">SOLID principles</li>
+      </ul>
+
+      <h3>Technologies</h3>
+      <ul class="skill-list">
+        <li class="skill">.NET / WPF (XAML)</li>
+        <li class="skill">SQLite</li>
+        <li class="skill">Git</li>
+        <li class="skill">Visual Studio</li>
+        <li class="skill">AutoCAD (.NET API)</li>
+      </ul>
+    </section>
+
+    <section id="code">
+      <h2>Code Example</h2>
+
+      <article class="code-example">
+        <h3>Room Number Sorter</h3>
+
+        <h4>Problem</h4>
+        <p>
+          Room numbers like <code>1.1</code>, <code>1.2</code>, <code>1.21</code>
+          sort incorrectly with default string comparison: it produces
+          <code>1.1, 1.21, 1.2</code> because characters are compared one by one,
+          not numeric segments. For engineering documentation this order is wrong
+          and breaks cross-referencing.
+        </p>
+
+        <h4>Solution</h4>
+        <p>
+          A custom comparer that splits each number by <code>.</code>,
+          compares segments as integers, and treats missing segments as zero.
+          Implements both <code>IComparer&lt;string&gt;</code> and
+          <code>IEqualityComparer&lt;string&gt;</code> so the same logic
+          powers both <code>Distinct()</code> and <code>OrderBy()</code>.
+        </p>
+
+        <pre><code>
+          using System;
+          using System.Collections.Generic;
+          using System.Linq;
+          class Program
+          {
+            static void Main()
+            {
+              List&lt;string&gt; values = new List&lt;string&gt; { "1", "3", "3", "2.2", "3", "1.1" };
+              var distinctValues = values.Distinct(new DotSeparatedComparer()).ToList();
+              var sortedValues = distinctValues.OrderBy(v =&gt; v, new DotSeparatedComparer()).ToList();
+              foreach (var value in sortedValues)
+              {
+                Console.WriteLine(value);
+              }
+            }
+          }
+          
+          class DotSeparatedComparer : IComparer&lt;string&gt;, IEqualityComparer&lt;string&gt;
+          {
+            public int Compare(string x, string y)
+            {
+              var xParts = x.Split('.').Select(int.Parse).ToArray();
+              var yParts = y.Split('.').Select(int.Parse).ToArray();
+              int length = Math.Max(xParts.Length, yParts.Length);
+              for (int i = 0; i &lt; length; i++)
+              {
+                int xPart = i &lt; xParts.Length ? xParts[i] : 0;
+                int yPart = i &lt; yParts.Length ? yParts[i] : 0;
+                int comparison = xPart.CompareTo(yPart);
+                if (comparison != 0)
+                {
+                  return comparison;
+                }
+              }
+              return 0;
+            }
+
+            public bool Equals(string x, string y)
+            {
+              return Compare(x, y) == 0;
+            }
+
+            public int GetHashCode(string obj)
+            {
+              var parts = obj.Split('.').Select(int.Parse).ToArray();
+              int hash = 17;
+              foreach (var part in parts)
+              {
+                hash = hash * 31 + part.GetHashCode();
+              }
+              return hash;
+            }
+          }
+        </code></pre>
+      </article>
+    </section>
+
+    <section id="work">
+      <h2>Work Experience</h2>
+
+      <article class="job">
+        <h3>Design Engineer — Fire and Security Systems</h3>
+        <p class="job-meta">
+          UE "Minskproekt" (Minsk Design Institute) · Minsk, Belarus · <em>2021 - Present</em>
+        </p>
+
+        <ul>
+          <li>Built C# utilities to automate repetitive design and documentation workflows</li>
+          <li>Developed a converter that transforms equipment specifications from Excel into AutoCAD drawings</li>
+          <li>Created calculators for fire-rated penetrations, reducing manual work</li>
+          <li>Designed fire alarm, security, and access control systems for industrial and commercial facilities</li>
+          <li>Coordinated projects with clients and government departments throughout the approval process</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="graduation">
+      <h2>Education</h2>
+
+      <article class="edu-item">
+        <h3>Full-Stack JavaScript</h3>
+        <p class="edu-meta">The Rolling Scopes School (RS School) · <em>2026 - Present</em></p>
+      </article>
+
+      <article class="edu-item">
+        <h3>Electromechanical Engineer</h3>
+        <p class="edu-meta">Belarusian National Technical University (BNTU) · <em>2017 - 2021</em></p>
+        <p class="edu-note">Instrument-Making Faculty</p>
+      </article>
+    </section>
+
+    <section id="languages">
+      <h2>Languages</h2>
+      <ul class="lang-list">
+        <li><strong>Russian</strong> — Native</li>
+        <li><strong>English</strong> — reading technical documentation, understanding spoken language; basic speaking
+        </li>
+        <li><strong>German</strong> — reading technical documentation, understanding spoken language; basic speaking
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer>
+    <a href="https://github.com/bobscrew" class="footer_link">GitHub</a>
+    <a href="https://rs.school/courses/javascript" class="footer_logo-link" target="_blank" rel="noopener">
+      <img src="resources/icons/rs-school-logo.svg" alt="RS School logo" class="footer_logo">
+    </a>
+    <span class="footer_year">© 2026 Vitold Habets</span>
+  </footer>
+
 </body>
+
 </html>
